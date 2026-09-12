@@ -732,6 +732,8 @@ namespace AntigravityComputerUse
 
         void HandleClient(TcpClient client)
         {
+            IntPtr hDesk = NativeBridge.OpenDesktop("default", 0, false, 0x01FF);
+            if (hDesk != IntPtr.Zero) NativeBridge.SetThreadDesktop(hDesk);
             try
             {
                 using (NetworkStream stream = client.GetStream())
@@ -749,6 +751,7 @@ namespace AntigravityComputerUse
             catch { }
             finally
             {
+                if (hDesk != IntPtr.Zero) NativeBridge.CloseDesktop(hDesk);
                 try { client.Close(); } catch { }
             }
         }
@@ -1476,22 +1479,29 @@ namespace AntigravityComputerUse
 
         string CaptureAndHashScreen(int left, int top, int width, int height, string requestedPath, out string shaHash, out bool isUnchanged)
         {
-            if (width <= 0 || height <= 0) throw new ArgumentException("Invalid capture dimensions: " + width + "x" + height);
+            Rectangle vs = SystemInformation.VirtualScreen;
+            int srcLeft = Math.Max(vs.Left, left);
+            int srcTop = Math.Max(vs.Top, top);
+            int srcRight = Math.Min(vs.Right, left + width);
+            int srcBottom = Math.Min(vs.Bottom, top + height);
+            int captureW = Math.Max(1, srcRight - srcLeft);
+            int captureH = Math.Max(1, srcBottom - srcTop);
+
             if (overlayForm != null) overlayForm.SetHiddenForCapture(true);
             Thread.Sleep(30);
             try
             {
-                using (Bitmap bmp = new Bitmap(width, height, PixelFormat.Format32bppArgb))
+                using (Bitmap bmp = new Bitmap(captureW, captureH, PixelFormat.Format32bppArgb))
                 {
                     using (Graphics g = Graphics.FromImage(bmp))
                     {
-                        g.CopyFromScreen(left, top, 0, 0, new Size(width, height), CopyPixelOperation.SourceCopy);
+                        g.CopyFromScreen(srcLeft, srcTop, 0, 0, new Size(captureW, captureH), CopyPixelOperation.SourceCopy);
                     }
 
-                    BitmapData bData = bmp.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+                    BitmapData bData = bmp.LockBits(new Rectangle(0, 0, captureW, captureH), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
                     try
                     {
-                        int byteCount = Math.Abs(bData.Stride) * height;
+                        int byteCount = Math.Abs(bData.Stride) * captureH;
                         byte[] rawPixels = new byte[byteCount];
                         Marshal.Copy(bData.Scan0, rawPixels, 0, byteCount);
                         using (var sha = SHA256.Create())
