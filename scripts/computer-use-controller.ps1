@@ -787,6 +787,16 @@ namespace AntigravityComputerUse
             return serializer.Serialize(res);
         }
 
+        private bool IsForegroundForeign(IntPtr fg, long targetHwnd)
+        {
+            if (fg == IntPtr.Zero || targetHwnd == 0 || fg.ToInt64() == targetHwnd) return false;
+            uint targetPid = 0, fgPid = 0;
+            NativeBridge.GetWindowThreadProcessId(new IntPtr(targetHwnd), out targetPid);
+            NativeBridge.GetWindowThreadProcessId(fg, out fgPid);
+            if (targetPid != 0 && fgPid != 0 && targetPid == fgPid) return false;
+            return true;
+        }
+
         Dictionary<string, object> ExecuteAction(string action, Dictionary<string, object> req)
         {
             lastActivityUtc = DateTime.UtcNow;
@@ -817,7 +827,7 @@ namespace AntigravityComputerUse
                     else
                     {
                         IntPtr fg = NativeBridge.GetActiveForegroundWindow();
-                        if (fg != IntPtr.Zero && fg.ToInt64() != activeTargetHandle)
+                        if (IsForegroundForeign(fg, activeTargetHandle))
                         {
                             NativeBridge.RawMouseEvent(0x0004, 0, 0, 0, UIntPtr.Zero);
                             NativeBridge.RawMouseEvent(0x0010, 0, 0, 0, UIntPtr.Zero);
@@ -1032,7 +1042,7 @@ namespace AntigravityComputerUse
                                 else
                                 {
                                     IntPtr curFg = NativeBridge.GetActiveForegroundWindow();
-                                    if (curFg != IntPtr.Zero && curFg.ToInt64() != activeTargetHandle)
+                                    if (IsForegroundForeign(curFg, activeTargetHandle))
                                     {
                                         uint curAx = (uint)(fromX * 65535 / (sw - 1));
                                         uint curAy = (uint)(fromY * 65535 / (sh - 1));
@@ -1395,7 +1405,7 @@ namespace AntigravityComputerUse
                                 else
                                 {
                                     IntPtr curFg = NativeBridge.GetActiveForegroundWindow();
-                                    if (curFg != IntPtr.Zero && curFg.ToInt64() != activeTargetHandle)
+                                    if (IsForegroundForeign(curFg, activeTargetHandle))
                                     {
                                         NativeBridge.RawMouseEvent(0x0004, 0, 0, 0, UIntPtr.Zero);
                                         NativeBridge.RawMouseEvent(0x0010, 0, 0, 0, UIntPtr.Zero);
@@ -1694,7 +1704,8 @@ namespace AntigravityComputerUse
                 { "HOME", 0x24 }, { "END", 0x23 }, { "PAGEUP", 0x21 }, { "PAGEDOWN", 0x22 },
                 { "LEFT", 0x25 }, { "UP", 0x26 }, { "RIGHT", 0x27 }, { "DOWN", 0x28 },
                 { "F1", 0x70 }, { "F2", 0x71 }, { "F3", 0x72 }, { "F4", 0x73 }, { "F5", 0x74 }, { "F6", 0x75 },
-                { "F7", 0x76 }, { "F8", 0x77 }, { "F9", 0x78 }, { "F10", 0x79 }, { "F11", 0x7A }, { "F12", 0x7B }
+                { "F7", 0x76 }, { "F8", 0x77 }, { "F9", 0x78 }, { "F10", 0x79 }, { "F11", 0x7A }, { "F12", 0x7B },
+                { "[", 0xDB }, { "]", 0xDD }, { "OEM_4", 0xDB }, { "OEM_6", 0xDD }
             };
 
             foreach (string k in rawKeys)
