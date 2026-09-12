@@ -30,9 +30,14 @@ To prevent latency, token waste, and tool churn, **strictly adhere to the follow
    & "C:\Users\icomp\.gemini\config\skills\computer-use\bin\cu.exe" <action> [options]
    ```
 
-4. **ALWAYS use action batches (`cu batch`) for multi-step workflows.**
-   - Never issue single clicks or keys across separate chat turns.
-   - Combine sequences (`focus`, `click`, `type`, `wait`, `drag`, `hotkey`) into a single `cu batch` call. Whole workflows execute atomically in <100 ms.
+4. **PREFER AGILE 1–2 ACTION MICRO-STEPS directly via CLI.**
+   - Do NOT write giant multi-step JSON batch scripts to disk upfront; it creates high perceived latency and delays user feedback.
+   - Execute 1–2 fast, atomic actions at a time directly on the CLI (`cu focus`, `cu type`, `cu key`, `cu click`), which execute in ~15 ms and provide immediate visual feedback on screen.
+   - Reserve `cu batch` strictly for continuous high-speed drawing strokes or tightly coupled atomic gestures.
+
+5. **KEEP HUD PERMANENTLY VISIBLE throughout the session.**
+   - The Frosted White Dynamic Island HUD and Pure White Ambient Glows must remain active and visible continuously while working.
+   - Never terminate or toggle the session between short micro-steps; leave the daemon running residently so the user always has visual confirmation and the instant ESC latch.
 
 ---
 
