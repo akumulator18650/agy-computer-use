@@ -101,18 +101,6 @@ cu batch -BatchPath .\hex_batch.json
 - **Side Glow**: 100 px wide alpha-blended pure white gradients pinned to primary display borders.
 - **Safety Interruption**: Pressing `ESC` triggers emergency stop via Win32 `RegisterHotKey(0x41C7, VK_ESCAPE)`.
 
----
-
-## 🏆 Verified Benchmarks
-
-* **MS Paint Art Challenge**:
-  * Supersonic Su-33 fighter jet drawn via high-speed micro-strokes.
-  * 3D Tiger I heavy tank (Pz.Kpfw. VI Ausf. H1) with road wheels, tracks, sloped armor, cupola, and 8.8 cm KwK 36 cannon constructed in 4 verified batches.
-* **Windows Calculator Automation**:
-  * Arithmetic calculation (`188 * 2442 = 459 096`) via UIA controls.
-  * Modal navigation to Programmer mode, selecting HEX mode, inputting `BEEF` and verifying 64-bit binary breakdown (`1011 1110 1110 1111`) with zero misclicks.
-
----
-
 ## 📄 License
-MIT License. Created by Ilya (@ikomlukter) & Antigravity.
+MIT License. Created by Ilya (@akumulator18650) & Antigravity.
+
