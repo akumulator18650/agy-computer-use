@@ -35,9 +35,13 @@ To prevent latency, token waste, and tool churn, **strictly adhere to the follow
    - Execute 1–2 fast, atomic actions at a time directly on the CLI (`cu focus`, `cu type`, `cu key`, `cu click`), which execute in ~15 ms and provide immediate visual feedback on screen.
    - Reserve `cu batch` strictly for continuous high-speed drawing strokes or tightly coupled atomic gestures.
 
-5. **KEEP HUD PERMANENTLY VISIBLE throughout the session.**
-   - The Frosted White Dynamic Island HUD and Pure White Ambient Glows must remain active and visible continuously while working.
-   - Never terminate or toggle the session between short micro-steps; leave the daemon running residently so the user always has visual confirmation and the instant ESC latch.
+5. **KEEP HUD PERMANENTLY VISIBLE during execution.**
+   - The Frosted White Dynamic Island HUD and Pure White Ambient Glows must remain active and visible continuously while performing actions.
+   - Do not terminate or restart the session between short micro-steps; keep it resident so the user has visual confirmation and the instant ESC latch throughout the workflow.
+
+6. **ALWAYS clean up (`cu session-stop`) when the task is done.**
+   - As soon as your UI workflow finishes and you hand control back to the user, call `cu session-stop`.
+   - This smoothly dismisses the HUD capsule and side glows so they don't linger on the screen after the task is over.
 
 ---
 
